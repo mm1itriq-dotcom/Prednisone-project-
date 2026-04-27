@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR Pro-Drug Activation: Prednisone → Prednisolone | 11β-HSD Enzyme</title>
+    <meta name="description"
+        content="An immersive WebVR educational module visualizing the pro-drug activation of Prednisone to Prednisolone by 11β-Hydroxysteroid Dehydrogenase (11β-HSD).">
+
+    <!-- A-Frame 1.6 -->
+    <script src="https://aframe.io/releases/1.6.0/aframe.min.js"></script>
+    <!-- A-Frame Environment -->
+    <script
+        src="https://unpkg.com/aframe-environment-component@1.3.7/dist/aframe-environment-component.min.js"></script>
+    <!-- A-Frame Extras (for animations/controls) -->
+    <script src="https://cdn.jsdelivr.net/gh/c-frame/aframe-extras@7.5.0/dist/aframe-extras.min.js"></script>
+
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+        <div class="loader-content">
+            <div class="dna-helix">
+                <div class="strand"></div>
+                <div class="strand"></div>
+            </div>
+            <h1>Loading VR Module…</h1>
+            <p>Prednisone → Prednisolone Activation</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Info HUD Overlay -->
+    <div id="info-hud" class="hidden">
+        <div id="station-indicator">
+            <span id="station-number">1</span> / 5
+        </div>
+        <div id="station-title"></div>
+        <button id="btn-prev" onclick="prevStation()">◀ Previous</button>
+        <button id="btn-next" onclick="nextStation()">Next ▶</button>
+        <button id="btn-toggle-info" onclick="toggleInfoPanel()">ℹ Info</button>
+    </div>
+
+    <!-- Detailed Info Panel -->
+    <div id="info-panel" class="hidden">
+        <button class="close-btn" onclick="toggleInfoPanel()">✕</button>
+        <h2 id="info-title"></h2>
+        <div id="info-body"></div>
+    </div>
+
+    <!-- A-Frame Scene -->
+    <a-scene id="vr-scene" loading-screen="enabled: false"
+        renderer="colorManagement: true; physicallyCorrectLights: true; antialias: true"
+        cursor="rayOrigin: mouse; fuse: false" raycaster="objects: .clickable" vr-mode-ui="enabled: true">
+        <!-- Assets -->
+        <a-assets timeout="60000">
+            <a-asset-item id="enzyme-obj" src="assets/enznoligobj.obj"></a-asset-item>
+            <a-asset-item id="pred-obj" src="assets/pred.obj"></a-asset-item>
+            <a-asset-item id="prednisolone-obj" src="assets/predlonoe.obj"></a-asset-item>
+        </a-assets>
+
+        <!-- Environment: Dark sci-fi lab -->
+        <a-entity
+            environment="preset: starry; groundColor: #0a0a1a; groundColor2: #111133; skyType: gradient; skyColor: #0a0015; horizonColor: #1a0a3a; lighting: distant; lightPosition: 0 1 -0.2; fog: 0.7; ground: flat; groundTexture: squares; groundYScale: 0.01; dressing: none"></a-entity>
+
+        <!-- Global Lighting -->
+        <a-entity light="type: ambient; color: #223366; intensity: 0.4"></a-entity>
+        <a-entity light="type: directional; color: #aabbff; intensity: 0.8" position="5 10 5"></a-entity>
+        <a-entity light="type: point; color: #6644ff; intensity: 0.6; distance: 30" position="-5 5 -5"></a-entity>
+
+        <!-- ===== STATION 1: INTRODUCTION ===== -->
+        <a-entity id="station-1" visible="true" position="0 0 0">
+            <!-- Title Board -->
+            <a-entity position="0 3.5 -5">
+                <!-- Glowing backdrop -->
+                <a-plane width="8" height="3.5" color="#0a0a2e" opacity="0.85" material="shader: flat"
+                    animation="property: material.opacity; from: 0.7; to: 0.9; dir: alternate; dur: 3000; loop: true">
+                </a-plane>
+                <!-- Border glow -->
+                <a-plane width="8.1" height="3.6" color="#4466ff" opacity="0.3" position="0 0 -0.02"
+                    material="shader: flat">
+                </a-plane>
+                <a-text value="Pro-Drug Activation in 3D" align="center" color="#88ccff" width="7" position="0 0.9 0.01"
+                    font="mozillavr"></a-text>
+                <a-text value="Prednisone → Prednisolone" align="center" color="#ffffff" width="5" position="0 0.3 0.01"
+                    font="mozillavr"></a-text>
+                <a-text value="Enzyme: 11β-Hydroxysteroid Dehydrogenase Type 1" align="center" color="#aaaaff" width="4"
+                    position="0 -0.2 0.01" font="mozillavr"></a-text>
+                <a-text value="Navigate using the arrows below (or ◀ ▶ buttons)" align="center" color="#66ff99"
+                    width="3.5" position="0 -0.9 0.01" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Decorative floating molecules -->
+            <a-entity id="intro-pred" position="-3 1.5 -9" obj-model="obj: #pred-obj"
+                material="color: #ff6644; opacity: 0.7; transparent: true; side: double" scale="0.4 0.4 0.4"
+                animation="property: rotation; to: 0 360 0; dur: 12000; loop: true; easing: linear"
+                animation__float="property: position; from: -3 1.3 -9; to: -3 1.8 -9; dur: 4000; dir: alternate; loop: true; easing: easeInOutSine">
+            </a-entity>
+            <a-entity id="intro-prednisolone" position="3 1.5 -9" obj-model="obj: #prednisolone-obj"
+                material="color: #44ff88; opacity: 0.7; transparent: true; side: double" scale="0.4 0.4 0.4"
+                animation="property: rotation; to: 0 -360 0; dur: 12000; loop: true; easing: linear"
+                animation__float="property: position; from: 3 1.3 -9; to: 3 1.8 -9; dur: 4000; dir: alternate; loop: true; easing: easeInOutSine">
+            </a-entity>
+
+            <!-- Arrow label -->
+            <a-text value="→" align="center" color="#ffcc00" width="6" position="0 1.5 -9" font="mozillavr"
+                animation="property: material.opacity; from: 0.5; to: 1; dur: 1500; dir: alternate; loop: true">
+            </a-text>
+
+            <!-- Floor grid glow -->
+            <a-ring position="0 0.05 -4" rotation="-90 0 0" radius-inner="2" radius-outer="5"
+                material="color: #2233aa; opacity: 0.15; shader: flat; side: double"></a-ring>
+        </a-entity>
+
+        <!-- ===== STATION 2: PREDNISONE (PRO-DRUG) ===== -->
+        <a-entity id="station-2" visible="false" position="0 0 0">
+            <!-- Info Board -->
+            <a-entity position="-3 3 -5">
+                <a-plane width="4" height="3" color="#1a0a0a" opacity="0.85" material="shader: flat"></a-plane>
+                <a-plane width="4.1" height="3.1" color="#ff4444" opacity="0.25" position="0 0 -0.02"
+                    material="shader: flat"></a-plane>
+                <a-text value="Prednisone (Pro-Drug)" align="center" color="#ff8866" width="3.5" position="0 1 0.01"
+                    font="mozillavr"></a-text>
+                <a-text
+                    value="Inactive form administered\norally to patients.\n\nC-11 position has a\nKETONE group (C=O)\n\nMust be metabolized by\n11β-HSD to become active."
+                    align="center" color="#ffffff" width="3.2" position="0 -0.1 0.01" font="mozillavr"
+                    wrap-count="30"></a-text>
+            </a-entity>
+
+            <!-- Prednisone Model (large, centered) -->
+            <a-entity id="pred-model" position="2 1.5 -5" obj-model="obj: #pred-obj"
+                material="color: #ff5533; side: double; metalness: 0.3; roughness: 0.6" scale="1.2 1.2 1.2"
+                animation="property: rotation; to: 0 360 0; dur: 20000; loop: true; easing: linear">
+            </a-entity>
+
+            <!-- C-11 Ketone annotation arrow -->
+            <a-entity position="2 3.2 -4">
+                <a-cone color="#ffcc00" radius-bottom="0.08" radius-top="0" height="0.4" rotation="180 0 0"
+                    position="0 -0.3 0"></a-cone>
+                <a-text value="C-11 Ketone (C=O)\n↓ Key Site" align="center" color="#ffdd44" width="3"
+                    position="0 0.3 0" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Glow ring under model -->
+            <a-ring position="2 0.05 -4" rotation="-90 0 0" radius-inner="0.3" radius-outer="1.8"
+                material="color: #ff4422; opacity: 0.2; shader: flat; side: double"
+                animation="property: scale; from: 1 1 1; to: 1.1 1.1 1.1; dur: 2000; dir: alternate; loop: true">
+            </a-ring>
+        </a-entity>
+
+        <!-- ===== STATION 3: ENZYME 11β-HSD ===== -->
+        <a-entity id="station-3" visible="false" position="0 0 0">
+            <!-- Info Board -->
+            <a-entity position="4 3 -5">
+                <a-plane width="4" height="3.5" color="#0a0a1a" opacity="0.85" material="shader: flat"></a-plane>
+                <a-plane width="4.1" height="3.6" color="#8844ff" opacity="0.25" position="0 0 -0.02"
+                    material="shader: flat"></a-plane>
+                <a-text value="11β-HSD Type 1 Enzyme" align="center" color="#bb88ff" width="3.5" position="0 1.2 0.01"
+                    font="mozillavr"></a-text>
+                <a-text
+                    value="11β-Hydroxysteroid\nDehydrogenase Type 1\n\nLocated in the liver.\n\nCatalyzes the REDUCTION\nof C-11 ketone to\nC-11 hydroxyl (-OH).\n\nCofactor: NADPH"
+                    align="center" color="#ffffff" width="3.2" position="0 -0.2 0.01" font="mozillavr"
+                    wrap-count="28"></a-text>
+            </a-entity>
+
+            <!-- Enzyme Model (large, semi-transparent) -->
+            <a-entity id="enzyme-model" position="-1 1.5 -8" obj-model="obj: #enzyme-obj"
+                material="color: #7755cc; opacity: 0.6; transparent: true; side: double; metalness: 0.2; roughness: 0.8"
+                scale="0.08 0.08 0.08"
+                animation="property: rotation; to: 0 360 0; dur: 40000; loop: true; easing: linear">
+            </a-entity>
+
+            <!-- Active site highlight -->
+            <a-sphere position="-1 1.5 -6" radius="0.6"
+                material="color: #ff44ff; opacity: 0.15; transparent: true; shader: flat; side: double"
+                animation="property: scale; from: 1 1 1; to: 1.3 1.3 1.3; dur: 2000; dir: alternate; loop: true">
+            </a-sphere>
+            <a-text value="← Active Site" align="left" color="#ff88ff" width="3" position="0 1.5 -5.5"
+                font="mozillavr"></a-text>
+
+            <!-- Glow ring -->
+            <a-ring position="-1 0.05 -6" rotation="-90 0 0" radius-inner="0.5" radius-outer="3"
+                material="color: #6633cc; opacity: 0.15; shader: flat; side: double">
+            </a-ring>
+        </a-entity>
+
+        <!-- ===== STATION 4: BINDING & REACTION ===== -->
+        <a-entity id="station-4" visible="false" position="0 0 0">
+            <!-- Info Board (top) -->
+            <a-entity position="0 4.8 -6">
+                <a-plane width="8" height="2.2" color="#0a1a0a" opacity="0.88" material="shader: flat"></a-plane>
+                <a-plane width="8.1" height="2.3" color="#44ff88" opacity="0.25" position="0 0 -0.02"
+                    material="shader: flat"></a-plane>
+                <a-text value="Enzyme-Substrate Docking & Catalysis" align="center" color="#66ffaa" width="7"
+                    position="0 0.5 0.01" font="mozillavr"></a-text>
+                <a-text value="Watch Prednisone dock into 11β-HSD active site → Lock → React → Prednisolone released"
+                    align="center" color="#ffffff" width="6" position="0 -0.1 0.01" font="mozillavr"></a-text>
+                <a-text id="phase-label" value="Phase: Approaching..." align="center" color="#ffdd44" width="5"
+                    position="0 -0.6 0.01" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- === ENZYME: Large, central, dominant === -->
+            <a-entity id="s4-enzyme" position="0 1.8 -7" obj-model="obj: #enzyme-obj"
+                material="color: #6644cc; opacity: 0.55; transparent: true; side: double; metalness: 0.15; roughness: 0.8"
+                scale="0.18 0.18 0.18"
+                animation__rotate="property: rotation; to: 0 360 0; dur: 90000; loop: true; easing: linear">
+            </a-entity>
+
+            <!-- Active site pocket glow (inside enzyme) -->
+            <a-sphere id="s4-active-glow" position="0.3 1.8 -6.5" radius="0.5"
+                material="color: #ff44ff; opacity: 0.08; transparent: true; shader: flat; side: double"
+                animation="property: scale; from: 1 1 1; to: 1.2 1.2 1.2; dur: 1500; dir: alternate; loop: true">
+            </a-sphere>
+            <a-text value="Active Site" align="center" color="#cc66ff" width="2" position="0.3 2.8 -6" font="mozillavr"
+                animation="property: material.opacity; from: 0.5; to: 1; dur: 1500; dir: alternate; loop: true"></a-text>
+
+            <!-- === PREDNISONE: Small, starts far left === -->
+            <a-entity id="docking-pred" position="-6 2 -4" obj-model="obj: #pred-obj"
+                material="color: #ff5533; side: double; metalness: 0.4; roughness: 0.4; opacity: 1; transparent: true"
+                scale="0.3 0.3 0.3">
+            </a-entity>
+            <!-- Prednisone label (follows drug) -->
+            <a-text id="s4-pred-label" value="Prednisone\n(Pro-Drug)" align="center" color="#ff8866" width="2.5"
+                position="-6 3.2 -4" font="mozillavr"></a-text>
+
+            <!-- === PREDNISOLONE: Emerges from enzyme (hidden initially) === -->
+            <a-entity id="result-prednisolone" position="4 2 -6" obj-model="obj: #prednisolone-obj"
+                material="color: #44ff88; side: double; metalness: 0.4; roughness: 0.4; opacity: 0; transparent: true"
+                scale="0.3 0.3 0.3">
+            </a-entity>
+            <a-text id="s4-result-label" value="Prednisolone\n(Active Drug)" align="center" color="#66ffaa" width="2.5"
+                position="4 3.2 -6" font="mozillavr" visible="false"></a-text>
+
+            <!-- Lock indicator ring (appears when docked) -->
+            <a-ring id="s4-lock-ring" position="0.3 1.8 -6.3" rotation="0 0 0" radius-inner="0.15" radius-outer="0.35"
+                material="color: #ffcc00; shader: flat; opacity: 0; transparent: true; side: double">
+            </a-ring>
+
+            <!-- Energy burst (reaction flash inside enzyme) -->
+            <a-sphere id="s4-burst" position="0.3 1.8 -6.5" radius="0.1"
+                material="color: #ffff44; shader: flat; opacity: 0; transparent: true">
+            </a-sphere>
+
+            <!-- NADPH cofactor label -->
+            <a-entity id="s4-nadph" position="1.5 1 -5.5" visible="false">
+                <a-plane width="2.5" height="0.6" color="#1a1a00" opacity="0.8" material="shader: flat"></a-plane>
+                <a-text value="NADPH → NADP⁺ + H⁻" align="center" color="#ffaa44" width="2.2" position="0 0 0.01"
+                    font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Reaction equation -->
+            <a-entity position="0 0.3 -7">
+                <a-plane width="7" height="0.6" color="#111122" opacity="0.7" material="shader: flat"></a-plane>
+                <a-text value="Prednisone + NADPH + H⁺  →  Prednisolone + NADP⁺" align="center" color="#aaffcc"
+                    width="5.5" position="0 0 0.01" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Floor glow -->
+            <a-ring position="0 0.05 -6.5" rotation="-90 0 0" radius-inner="1" radius-outer="4"
+                material="color: #4422aa; opacity: 0.12; shader: flat; side: double"></a-ring>
+        </a-entity>
+
+        <!-- ===== STATION 5: PREDNISOLONE RESULT ===== -->
+        <a-entity id="station-5" visible="false" position="0 0 0">
+            <!-- Info Board -->
+            <a-entity position="-3 3 -5">
+                <a-plane width="4.5" height="3.5" color="#0a1a0a" opacity="0.85" material="shader: flat"></a-plane>
+                <a-plane width="4.6" height="3.6" color="#22ff66" opacity="0.25" position="0 0 -0.02"
+                    material="shader: flat"></a-plane>
+                <a-text value="Prednisolone (Active Drug)" align="center" color="#66ffaa" width="4"
+                    position="0 1.2 0.01" font="mozillavr"></a-text>
+                <a-text
+                    value="Active glucocorticoid.\n\nC-11 now has a HYDROXYL\ngroup (-OH) instead of\nketone (C=O).\n\nBinds glucocorticoid\nreceptor → suppresses\ninflammation and immunity."
+                    align="center" color="#ffffff" width="3.8" position="0 -0.2 0.01" font="mozillavr"
+                    wrap-count="28"></a-text>
+            </a-entity>
+
+            <!-- Prednisolone Model (large, centered) -->
+            <a-entity position="3 1.5 -7" obj-model="obj: #prednisolone-obj"
+                material="color: #33ee77; side: double; metalness: 0.3; roughness: 0.5" scale="0.8 0.8 0.8"
+                animation="property: rotation; to: 0 360 0; dur: 20000; loop: true; easing: linear">
+            </a-entity>
+
+            <!-- C-11 Hydroxyl annotation -->
+            <a-entity position="2.5 3.2 -4">
+                <a-cone color="#00ff88" radius-bottom="0.08" radius-top="0" height="0.4" rotation="180 0 0"
+                    position="0 -0.3 0"></a-cone>
+                <a-text value="C-11 Hydroxyl (-OH)\n↓ Now Active!" align="center" color="#44ffaa" width="3"
+                    position="0 0.3 0" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Comparison panel -->
+            <a-entity position="0 0.8 -7">
+                <a-plane width="6" height="1.5" color="#111133" opacity="0.8" material="shader: flat"></a-plane>
+                <a-text value="Before: C=O (Inactive) → After: C-OH (Active)" align="center" color="#ffdd44" width="5"
+                    position="0 0.2 0.01" font="mozillavr"></a-text>
+                <a-text value="This single reduction makes prednisolone 4× more potent" align="center" color="#aaffcc"
+                    width="4.5" position="0 -0.3 0.01" font="mozillavr"></a-text>
+            </a-entity>
+
+            <!-- Glow ring -->
+            <a-ring position="2.5 0.05 -4" rotation="-90 0 0" radius-inner="0.3" radius-outer="1.8"
+                material="color: #22ff66; opacity: 0.2; shader: flat; side: double"
+                animation="property: scale; from: 1 1 1; to: 1.1 1.1 1.1; dur: 2000; dir: alternate; loop: true">
+            </a-ring>
+
+            <!-- Success particles -->
+            <a-entity position="2.5 1.5 -4">
+                <a-sphere radius="0.05" material="color: #66ffaa; shader: flat; opacity: 0.6; transparent: true"
+                    position="0 0 0"
+                    animation="property: position; from: 0 0 0; to: 1 2 0.5; dur: 3000; loop: true; easing: linear"
+                    animation__fade="property: material.opacity; from: 0.8; to: 0; dur: 3000; loop: true">
+                </a-sphere>
+                <a-sphere radius="0.05" material="color: #88ff66; shader: flat; opacity: 0.6; transparent: true"
+                    animation="property: position; from: 0 0 0; to: -0.8 1.8 -0.5; dur: 2500; loop: true; easing: linear"
+                    animation__fade="property: material.opacity; from: 0.8; to: 0; dur: 2500; loop: true">
+                </a-sphere>
+                <a-sphere radius="0.05" material="color: #aaffcc; shader: flat; opacity: 0.6; transparent: true"
+                    animation="property: position; from: 0 0 0; to: 0.5 2.2 0.8; dur: 3500; loop: true; easing: linear"
+                    animation__fade="property: material.opacity; from: 0.8; to: 0; dur: 3500; loop: true">
+                </a-sphere>
+            </a-entity>
+        </a-entity>
+
+        <!-- ===== 3D Navigation Arrows (always visible) ===== -->
+        <a-entity id="nav-arrows" position="0 0.3 -2.5">
+            <!-- Previous Arrow -->
+            <a-entity id="nav-prev" class="clickable" position="-1.5 0 0"
+                geometry="primitive: cone; radiusBottom: 0.25; radiusTop: 0; height: 0.4"
+                material="color: #4488ff; shader: flat; opacity: 0.8" rotation="0 0 90"
+                event-set__mouseenter="_event: mouseenter; material.opacity: 1; scale: 1.2 1.2 1.2"
+                event-set__mouseleave="_event: mouseleave; material.opacity: 0.8; scale: 1 1 1">
+            </a-entity>
+            <a-text value="◀ Prev" position="-1.5 -0.4 0" align="center" color="#4488ff" width="2"
+                font="mozillavr"></a-text>
+
+            <!-- Next Arrow -->
+            <a-entity id="nav-next" class="clickable" position="1.5 0 0"
+                geometry="primitive: cone; radiusBottom: 0.25; radiusTop: 0; height: 0.4"
+                material="color: #44ff88; shader: flat; opacity: 0.8" rotation="0 0 -90"
+                event-set__mouseenter="_event: mouseenter; material.opacity: 1; scale: 1.2 1.2 1.2"
+                event-set__mouseleave="_event: mouseleave; material.opacity: 0.8; scale: 1 1 1">
+            </a-entity>
+            <a-text value="Next ▶" position="1.5 -0.4 0" align="center" color="#44ff88" width="2"
+                font="mozillavr"></a-text>
+        </a-entity>
+
+        <!-- Camera Rig -->
+        <a-entity id="rig" position="0 1.6 0">
+            <a-camera look-controls="pointerLockEnabled: false" wasd-controls="acceleration: 20">
+                <!-- VR Cursor (for headset) -->
+                <a-entity cursor="fuse: true; fuseTimeout: 1500" position="0 0 -1"
+                    geometry="primitive: ring; radiusInner: 0.01; radiusOuter: 0.015"
+                    material="color: #ffffff; shader: flat; opacity: 0.8">
+                </a-entity>
+            </a-camera>
+        </a-entity>
+
+    </a-scene>
+
+    <script>
+        // ============================================
+        // Station Management
+        // ============================================
+        let currentStation = 1;
+        const totalStations = 5;
+
+        const stationInfo = {
+            1: {
+                title: "Introduction: Pro-Drug Activation",
+                detail: `<p><strong>What is a Pro-Drug?</strong></p>
+                    <p>A pro-drug is an inactive (or less active) form of a medication that requires metabolic conversion inside the body to become pharmacologically active.</p>
+                    <p><strong>Prednisone</strong> is a widely prescribed synthetic corticosteroid, but it is actually a <em>pro-drug</em>. It must be converted to <strong>Prednisolone</strong> (the active form) by the enzyme <strong>11β-Hydroxysteroid Dehydrogenase Type 1 (11β-HSD1)</strong> in the liver.</p>
+                    <p><strong>Why VR?</strong> The 3D spatial relationships between the enzyme's active site and the steroid substrate are impossible to fully appreciate in 2D diagrams. VR lets you walk around and inspect the C-11 position where the critical chemical change occurs.</p>`
+            },
+            2: {
+                title: "Prednisone — The Inactive Pro-Drug",
+                detail: `<p><strong>Prednisone</strong> (C₂₁H₂₆O₅)</p>
+                    <p>Prednisone is administered orally as a tablet. However, it has minimal binding affinity for the glucocorticoid receptor in its current form.</p>
+                    <p><strong>Key Structural Feature:</strong> At the <strong>C-11 position</strong>, prednisone bears a <strong>ketone group (C=O)</strong>. This carbonyl must be reduced to a hydroxyl for the drug to bind its receptor.</p>
+                    <p><strong>Clinical Note:</strong> Patients with severe liver disease may have impaired conversion, making prednisolone (the active form) the preferred prescription for them.</p>`
+            },
+            3: {
+                title: "Enzyme: 11β-HSD Type 1",
+                detail: `<p><strong>11β-Hydroxysteroid Dehydrogenase Type 1</strong></p>
+                    <p>This enzyme is primarily expressed in the <strong>liver, adipose tissue, and brain</strong>. It belongs to the short-chain dehydrogenase/reductase (SDR) superfamily.</p>
+                    <p><strong>Reaction:</strong> It uses <strong>NADPH</strong> as a cofactor to catalyze the reduction of the 11-oxo group (ketone) to a hydroxyl group.</p>
+                    <p><strong>Active Site:</strong> The glowing purple region represents the catalytic pocket where prednisone binds. The NADPH cofactor sits adjacent, donating a hydride (H⁻) to the C-11 carbon.</p>
+                    <p><em>PDB structures: 1XSE, 2IRW, 3CZR</em></p>`
+            },
+            4: {
+                title: "The Conversion Reaction",
+                detail: `<p><strong>Enzymatic Reduction at C-11</strong></p>
+                    <p>Watch as Prednisone docks into the 11β-HSD1 active site:</p>
+                    <ol>
+                        <li>Prednisone enters the hydrophobic binding pocket</li>
+                        <li>The C-11 ketone (C=O) is positioned near the NADPH cofactor</li>
+                        <li>NADPH donates a hydride ion (H⁻) to the carbonyl carbon</li>
+                        <li>The ketone is <strong>reduced to a hydroxyl (C-OH)</strong></li>
+                        <li>Prednisolone (active drug) is released</li>
+                    </ol>
+                    <p><strong>Reaction:</strong> Prednisone + NADPH + H⁺ → Prednisolone + NADP⁺</p>`
+            },
+            5: {
+                title: "Prednisolone — The Active Glucocorticoid",
+                detail: `<p><strong>Prednisolone</strong> (C₂₁H₂₈O₅)</p>
+                    <p>Now bearing a <strong>hydroxyl group (C-OH) at C-11</strong>, prednisolone can bind the <strong>glucocorticoid receptor (GR)</strong> with high affinity.</p>
+                    <p><strong>Pharmacological Effects:</strong></p>
+                    <ul>
+                        <li>Potent anti-inflammatory action</li>
+                        <li>Immunosuppression</li>
+                        <li>Used in asthma, autoimmune diseases, organ transplant rejection</li>
+                    </ul>
+                    <p><strong>Key Takeaway:</strong> A single reduction (C=O → C-OH) at C-11 transforms an inactive pill into one of medicine's most powerful anti-inflammatory agents. This 3D visualization demonstrates why understanding stereochemistry and enzyme-substrate interactions is crucial in medicinal chemistry.</p>`
+            }
+        };
+
+        function showStation(n) {
+            // Clear any running Station 4 timers
+            if (typeof clearReactionTimers === 'function') clearReactionTimers();
+            // Hide all stations
+            for (let i = 1; i <= totalStations; i++) {
+                const el = document.getElementById(`station-${i}`);
+                if (el) el.setAttribute('visible', false);
+            }
+            // Show target station
+            const target = document.getElementById(`station-${n}`);
+            if (target) target.setAttribute('visible', true);
+
+            currentStation = n;
+
+            // Update HUD
+            document.getElementById('station-number').textContent = n;
+            document.getElementById('station-title').textContent = stationInfo[n].title;
+            document.getElementById('btn-prev').disabled = (n === 1);
+            document.getElementById('btn-next').disabled = (n === totalStations);
+            document.getElementById('btn-prev').style.opacity = (n === 1) ? '0.4' : '1';
+            document.getElementById('btn-next').style.opacity = (n === totalStations) ? '0.4' : '1';
+
+            // Update info panel content
+            document.getElementById('info-title').textContent = stationInfo[n].title;
+            document.getElementById('info-body').innerHTML = stationInfo[n].detail;
+
+            // If station 4 (reaction), restart animations
+            if (n === 4) {
+                restartReactionAnimations();
+            }
+        }
+
+        function nextStation() {
+            if (currentStation < totalStations) showStation(currentStation + 1);
+        }
+
+        function prevStation() {
+            if (currentStation > 1) showStation(currentStation - 1);
+        }
+
+        function toggleInfoPanel() {
+            document.getElementById('info-panel').classList.toggle('hidden');
+        }
+
+        // ============================================
+        // Station 4: Multi-phase docking animation
+        // ============================================
+        let reactionTimers = [];
+
+        function clearReactionTimers() {
+            reactionTimers.forEach(t => clearTimeout(t));
+            reactionTimers = [];
+        }
+
+        function restartReactionAnimations() {
+            clearReactionTimers();
+
+            const drug = document.getElementById('docking-pred');
+            const drugLabel = document.getElementById('s4-pred-label');
+            const result = document.getElementById('result-prednisolone');
+            const resultLabel = document.getElementById('s4-result-label');
+            const activeGlow = document.getElementById('s4-active-glow');
+            const lockRing = document.getElementById('s4-lock-ring');
+            const burst = document.getElementById('s4-burst');
+            const nadph = document.getElementById('s4-nadph');
+            const phaseLabel = document.getElementById('phase-label');
+            const enzyme = document.getElementById('s4-enzyme');
+
+            // --- RESET everything ---
+            drug.setAttribute('position', '-6 2 -4');
+            drug.setAttribute('scale', '0.3 0.3 0.3');
+            drug.setAttribute('material', 'color: #ff5533; side: double; metalness: 0.4; roughness: 0.4; opacity: 1; transparent: true');
+            drug.setAttribute('rotation', '0 0 0');
+            // Remove any leftover animations
+            ['animation', 'animation__scale', 'animation__fade', 'animation__rotate', 'animation__dock', 'animation__lock'].forEach(a => drug.removeAttribute(a));
+
+            drugLabel.setAttribute('position', '-6 3.2 -4');
+            drugLabel.setAttribute('visible', true);
+
+            result.setAttribute('position', '0.3 1.8 -6.5');
+            result.setAttribute('scale', '0.15 0.15 0.15');
+            result.setAttribute('material', 'color: #44ff88; side: double; metalness: 0.4; roughness: 0.4; opacity: 0; transparent: true');
+            ['animation', 'animation__move', 'animation__scale', 'animation__rotate'].forEach(a => result.removeAttribute(a));
+            resultLabel.setAttribute('visible', false);
+
+            lockRing.setAttribute('material', 'color: #ffcc00; shader: flat; opacity: 0; transparent: true; side: double');
+            lockRing.removeAttribute('animation');
+            lockRing.removeAttribute('animation__spin');
+
+            burst.setAttribute('scale', '0.1 0.1 0.1');
+            burst.setAttribute('material', 'color: #ffff44; shader: flat; opacity: 0; transparent: true');
+            burst.removeAttribute('animation');
+            burst.removeAttribute('animation__fade');
+
+            nadph.setAttribute('visible', false);
+
+            enzyme.setAttribute('material', 'color: #6644cc; opacity: 0.55; transparent: true; side: double; metalness: 0.15; roughness: 0.8');
+
+            if (phaseLabel) phaseLabel.setAttribute('value', 'Phase 1: Substrate Approaching...');
+
+            // === PHASE 1: Prednisone flies toward enzyme (0–3s) ===
+            setTimeout(() => {
+                drug.setAttribute('animation', 'property: position; from: -6 2 -4; to: -1.5 2 -5.5; dur: 3000; easing: easeInOutQuad');
+                drug.setAttribute('animation__rotate', 'property: rotation; to: 0 360 0; dur: 4000; loop: true; easing: linear');
+                drugLabel.setAttribute('visible', false);
+            }, 100);
+
+            // === PHASE 2: Drug shrinks & orients toward active site (3–5s) ===
+            reactionTimers.push(setTimeout(() => {
+                if (phaseLabel) phaseLabel.setAttribute('value', 'Phase 2: Orienting to Active Site...');
+                drug.removeAttribute('animation');
+                drug.setAttribute('animation', 'property: position; from: -1.5 2 -5.5; to: 0.3 1.8 -6.3; dur: 2000; easing: easeInOutCubic');
+                drug.setAttribute('animation__scale', 'property: scale; from: 0.3 0.3 0.3; to: 0.15 0.15 0.15; dur: 2000; easing: easeInOutCubic');
+                // Active site glows brighter to attract
+                activeGlow.setAttribute('material', 'color: #ff44ff; opacity: 0.25; transparent: true; shader: flat; side: double');
+            }, 3200));
+
+            // === PHASE 3: LOCK — Drug snaps into active site (5–6s) ===
+            reactionTimers.push(setTimeout(() => {
+                if (phaseLabel) phaseLabel.setAttribute('value', 'Phase 3: Substrate LOCKED in Active Site!');
+                // Stop drug rotation — it's locked
+                drug.removeAttribute('animation__rotate');
+                drug.setAttribute('rotation', '30 45 0');
+                // Lock ring appears and spins
+                lockRing.setAttribute('animation', 'property: material.opacity; from: 0; to: 0.9; dur: 500; easing: easeOutQuad');
+                lockRing.setAttribute('animation__spin', 'property: rotation; from: 0 0 0; to: 0 0 360; dur: 2000; loop: true; easing: linear');
+                // Active site locks tight (color shift)
+                activeGlow.setAttribute('material', 'color: #ffaa00; opacity: 0.35; transparent: true; shader: flat; side: double');
+                // Show NADPH cofactor
+                nadph.setAttribute('visible', true);
+            }, 5500));
+
+            // === PHASE 4: Reaction flash inside enzyme (7–8s) ===
+            reactionTimers.push(setTimeout(() => {
+                if (phaseLabel) phaseLabel.setAttribute('value', 'Phase 4: NADPH Reduction — C=O → C-OH');
+                // Enzyme briefly brightens during catalysis
+                enzyme.setAttribute('material', 'color: #8866ee; opacity: 0.7; transparent: true; side: double; metalness: 0.15; roughness: 0.8');
+                // Energy burst
+                burst.setAttribute('animation', 'property: scale; from: 0.1 0.1 0.1; to: 2.5 2.5 2.5; dur: 1200; easing: easeOutQuad');
+                burst.setAttribute('animation__fade', 'property: material.opacity; from: 0.9; to: 0; dur: 1200; easing: easeOutQuad');
+                // Fade out prednisone (it's being converted)
+                drug.setAttribute('animation__fade', 'property: material.opacity; from: 1; to: 0; dur: 1000; easing: easeInQuad');
+                // Lock ring fades
+                lockRing.removeAttribute('animation');
+                lockRing.setAttribute('animation', 'property: material.opacity; from: 0.9; to: 0; dur: 800');
+            }, 7500));
+
+            // === PHASE 5: Prednisolone appears inside and emerges (8.5–11s) ===
+            reactionTimers.push(setTimeout(() => {
+                if (phaseLabel) phaseLabel.setAttribute('value', 'Phase 5: Active Metabolite Released!');
+                // Enzyme returns to normal
+                enzyme.setAttribute('material', 'color: #6644cc; opacity: 0.55; transparent: true; side: double; metalness: 0.15; roughness: 0.8');
+                activeGlow.setAttribute('material', 'color: #ff44ff; opacity: 0.08; transparent: true; shader: flat; side: double');
+                // Prednisolone fades in inside the active site
+                result.setAttribute('animation', 'property: material.opacity; from: 0; to: 1; dur: 1500; easing: easeOutQuad');
+                result.setAttribute('animation__rotate', 'property: rotation; to: 0 360 0; dur: 8000; loop: true; easing: linear');
+            }, 9000));
+
+            // Prednisolone moves out of the enzyme
+            reactionTimers.push(setTimeout(() => {
+                result.setAttribute('animation__move', 'property: position; from: 0.3 1.8 -6.5; to: 4 2 -5; dur: 2500; easing: easeInOutQuad');
+                result.setAttribute('animation__scale', 'property: scale; from: 0.15 0.15 0.15; to: 0.35 0.35 0.35; dur: 2500; easing: easeInOutQuad');
+                resultLabel.setAttribute('visible', true);
+            }, 11000));
+
+            // Final phase label
+            reactionTimers.push(setTimeout(() => {
+                if (phaseLabel) phaseLabel.setAttribute('value', '✓ Conversion Complete — Prednisolone is now active!');
+            }, 13500));
+        }
+
+        // ============================================
+        // Loading Screen
+        // ============================================
+        const scene = document.getElementById('vr-scene');
+        let progress = 0;
+        const progressInterval = setInterval(() => {
+            progress += 2;
+            if (progress > 95) progress = 95;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }, 100);
+
+        scene.addEventListener('loaded', () => {
+            clearInterval(progressInterval);
+            document.getElementById('progressFill').style.width = '100%';
+            setTimeout(() => {
+                document.getElementById('loading-screen').classList.add('fade-out');
+                document.getElementById('info-hud').classList.remove('hidden');
+                showStation(1);
+            }, 500);
+        });
+
+        // ============================================
+        // 3D Arrow clickable navigation
+        // ============================================
+        document.getElementById('nav-prev').addEventListener('click', prevStation);
+        document.getElementById('nav-next').addEventListener('click', nextStation);
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === 'd') nextStation();
+            if (e.key === 'ArrowLeft' || e.key === 'a') prevStation();
+            if (e.key === 'i') toggleInfoPanel();
+        });
+    </script>
+</body>
+
+</html>
